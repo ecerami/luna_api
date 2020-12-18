@@ -116,6 +116,12 @@ make run_api
 
 By default, this will start an API on port 8000.  Interactive Swagger API docs will be located at 8000/docs.
 
+To run the Luna API in production, run:
+
+```
+make run_api_prod
+```
+
 # Downsampling h5ad Files
 
 By their very nature, h5ad files tend to be quite large, as they may cover tens of thousands of cells and tens of thousands of genes.  As I was developing Luna, I realized I needed to generate smaller h5ad files that I could use for unit testing and quick examples.  To that end, the Luna CLI includes an option for downsampling h5ad files.
