@@ -1,5 +1,5 @@
 Packaging:
-  ☐ Finalize the README File
+  ✔ Finalize the README File @done(20-12-18 11:07)
 
 Testing:
   ☐ Add unit tests to downsampling class
@@ -7,8 +7,8 @@ Testing:
 
 Deploy to Linode:
   ✔ Deploy CLI to Linode @done(20-12-17 18:51)
-  ☐ Deploy postgres to Linode
-  ☐ Run import on a few genes
-  ☐ Deploy API to cloud
+  ✔ Deploy postgres to Linode @done(20-12-18 11:07)
+  ✔ Run import on a few genes @done(20-12-18 11:07)
+  ✔ Deploy API to cloud @done(20-12-18 13:25)
   ☐ Run import on an entire h5ad file
 

@@ -28,4 +28,7 @@ clean:
 	coverage erase
 
 run_api:
-	uvicorn luna.api.api:app --reload
+	uvicorn luna.api.api:app --reload --host 0.0.0.0 --port 8000
+
+run_api_prod:
+	uvicorn luna.api.api:app --host 0.0.0.0 --port 8000
