@@ -10,6 +10,7 @@ from luna.db.base import Base
 class DbConnection:
     """Datbase Connection with database engine and session objects."""
 
+    # Pattern:  "postgresql+psycopg2://username:password@localhost/luna"
     DEFAULT_DB_CONNECT_STR = "postgresql+psycopg2://@localhost/luna"
 
     def __init__(self):

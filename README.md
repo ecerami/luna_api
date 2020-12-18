@@ -35,7 +35,50 @@ python setup.py install
 
 The Luna API requires a running instance of PostgreSQL.  You can find many tutorials on installing PostgreSQL, including this one on [installing PostgreSQL to Ubuntu](https://www.linode.com/docs/guides/how-to-install-postgresql-on-ubuntu-16-04/).
 
-#TODO Command Line Usage
+Once you have verified that your PostgresSQL server is running, you need to set a ```LUNA_DB_CONNECT``` string.  Use the following pattern:
+
+```
+postgresql+psycopg2://username:password@localhost/luna
+```
+
+For example:
+
+```
+export LUNA_DB_CONNECT=postgresql+psycopg2://postgres:XXXXXXX@localhost/luna
+```
+
+For convenience, you may want to consider adding ```LUNA_DB_CONNECT``` to your ```.bash_profile``` or ```.bashrc.```
+
+# Command Line Usage
+
+To run the ```luna``` command line tool, make sure you have first activated your virtual environment:
+
+```
+source .venv/bin/activate
+```
+
+Then, type:
+
+```
+luna
+```
+
+As output, you should see:
+
+```
+Usage: luna [OPTIONS] COMMAND [ARGS]...
+
+  Run luna.
+
+Options:
+  --verbose  Enable verbose mode
+  --help     Show this message and exit.
+
+Commands:
+  add-h5ad         Add a new h5ad file to the database.
+  downsample-h5ad  Downsample an h5ad file.
+  reset-db         Reset the database.
+```
 
 # Example Data
 
@@ -47,7 +90,31 @@ To download the full tabula muris data set run:
 wget https://cellxgene-example-data.czi.technology/tabula-muris.h5ad
 ```
 
-#TODO: Running the API
+# Loading Data
+
+To load an h5ad file, you must first create an ```.ini``` configuration file.  Here is an [example configuration file](examples/tabula_muris_mini.ini) for loading the [mini h5ad](/examples/tabula_muris_mini.h5ad) file.  In the config file, you can specify a ```genes``` section with specific genes to imported;  if you remove the ```genes``` section, all genes in the h5ad file will be imported.
+
+To import the data, you then run:
+
+```
+luna add-h5ad examples/tabula_muris_mini.ini
+```
+
+If you want verbose output, use:
+
+```
+luna --verbose add-h5ad examples/tabula_muris_mini.ini
+```
+
+# Running the API
+
+To the Luna API, run:
+
+```
+make run_api
+```
+
+By default, this will start an API on port 8000.  Interactive Swagger API docs will be located at 8000/docs.
 
 # Downsampling h5ad Files
 
@@ -74,7 +141,9 @@ luna --verbose downsample-h5ad examples/tabula_muris_downsample.ini examples/tab
 
 By default, this will create a new ```tabula_muris_mini.h5ad``` with only 100 cells and 3 genes.  To specify more cells, use the ```--num_cells``` option.
 
-#TODO: Make options
+# Additional Make Commands
+
+The Make file includes a few additional commands that might be useful for developers, including running tests, linting code, etc.
 
 # License
 

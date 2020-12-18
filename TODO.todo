@@ -1,19 +1,14 @@
-Misc:
-  ☐ Check into GitHub
-
 Packaging:
-  ✔ Finalize the README File for downsampling @done(20-12-14 12:08)
-  ☐ Finalize the README file for setting up the database connection
-  ☐ Finalize the README File for loading sample data
+  ☐ Finalize the README File
 
 Testing:
   ☐ Add unit tests to downsampling class
   ☐ Add unit tests to API endpoints
 
-Deploy to cloud:
-  Deploy CLI to cloud:
-  Deploy database to cloud:
-  Run import on a few genes:
-  Deploy API to cloud:
-  Run import on an entire h5ad file:
+Deploy to Linode:
+  ✔ Deploy CLI to Linode @done(20-12-17 18:51)
+  ☐ Deploy postgres to Linode
+  ☐ Run import on a few genes
+  ☐ Deploy API to cloud
+  ☐ Run import on an entire h5ad file
 
