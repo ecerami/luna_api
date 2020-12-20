@@ -37,7 +37,6 @@ class ScatterPlot(Base):
     def __repr__(self):
         """Get Scatter Plot Summary."""
         token_list = self.coordinate_list.split(DB_DELIM)
-        return "<ScatterPlot(%s, vector of %d elements)>" % (
-            self.gene_symbol,
+        return "<ScatterPlot(vector of %d elements)>" % (
             len(token_list),
         )

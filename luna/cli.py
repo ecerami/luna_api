@@ -4,9 +4,9 @@ Luna Command Line Interface (CLI).
 Primarily used to add new h5ad data to the database.
 """
 import logging
+from luna.config.luna_config import LunaConfig
 import click
 import emoji
-from configparser import ConfigParser
 from luna.h5ad.h5ad_persist import H5adDb
 from luna.h5ad.h5ad_downsample import H5adDownSample
 from luna.db.db_util import DbConnection
@@ -27,21 +27,14 @@ def cli(verbose):
 def add_h5ad(config_file_name):
     """Add a new h5ad file to the database."""
     output_header("Adding data from config file:  %s." % config_file_name)
-    cfg = ConfigParser()
-    cfg.read(config_file_name)
-    h5ad_file_name = cfg.get("h5ad", "file_name")
-    h5ad_description = cfg.get("h5ad", "description")
-    h5ad_url = cfg.get("h5ad", "url")
+    luna_config = LunaConfig.LunaConfig(config_file_name)
 
-    if cfg.has_section("genes"):
-        gene_list = cfg.get("genes", "gene_list", fallback=None)
-        gene_list = [x.strip() for x in gene_list.split(",")]
-        click.echo("Importing %d genes." % len(gene_list))
-    else:
-        gene_list = []
-        click.echo("Importing all genes.")
-
-    h5ad = H5adDb(h5ad_file_name, h5ad_description, h5ad_url, gene_list)
+    h5ad = H5adDb(
+        luna_config.h5ad_file_name,
+        luna_config.h5ad_description,
+        luna_config.h5ad_url,
+        luna_config.gene_list,
+    )
     h5ad.persist_to_database()
     output_header(emoji.emojize("Done! :beer:", use_aliases=True))
 
@@ -53,13 +46,11 @@ def add_h5ad(config_file_name):
 def downsample_h5ad(config_file_name, output_file_name, num_cells):
     """Downsample an h5ad file."""
     output_header("Using config file:  %s." % config_file_name)
-    cfg = ConfigParser()
-    cfg.read(config_file_name)
-    h5ad_file_name = cfg.get("h5ad", "file_name")
-    output_header("Downsampling file:  %s." % h5ad_file_name)
-    gene_list = [x.strip() for x in cfg.get("genes", "gene_list").split(",")]
+    luna_config = LunaConfig.LunaConfig(config_file_name)
 
-    down_sampler = H5adDownSample(h5ad_file_name, num_cells, gene_list)
+    down_sampler = H5adDownSample(
+        luna_config.h5ad_file_name, num_cells, luna_config.gene_list
+    )
     down_sampler.save(output_file_name)
     output_header("Writing new data to:  %s." % output_file_name)
     output_header(emoji.emojize("Done! :beer:", use_aliases=True))

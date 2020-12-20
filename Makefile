@@ -14,7 +14,7 @@ format:
 	$(FORMATTER) $(PROJ_SLUG)
 
 test:
-	py.test --cov-report term --cov=$(PROJ_SLUG) tests/
+	py.test -s --cov-report term --cov=$(PROJ_SLUG) tests/
 
 check: format lint test
 

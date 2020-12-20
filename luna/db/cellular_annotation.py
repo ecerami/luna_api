@@ -35,9 +35,9 @@ class CellularAnnotation(Base):
 
     def __repr__(self):
         """Get CellularAnnotation Summary."""
-        token_list = self.coordinate_list.split(DB_DELIM)
+        token_list = self.value_list.split(DB_DELIM)
         return "<CellularAnnotation(%s, type=%s, vector of %d elements)>" % (
             self.key,
-            self.annotation_type,
+            self.type,
             len(token_list),
         )

@@ -95,7 +95,7 @@ class H5adDb:
 
         gene_index = self._create_gene_index_lookup(var)
 
-        if len(self.gene_list) == 0:
+        if self.gene_list is None or len(self.gene_list) == 0:
             self.gene_list = var.index
 
         for current_gene in self.gene_list:

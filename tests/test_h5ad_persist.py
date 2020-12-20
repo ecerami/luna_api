@@ -30,6 +30,10 @@ def test_h5ad_persist():
     verify_umap(session, bucket_id)
     verify_gene_expression(session, bucket_id)
 
+    h5ad = H5adDb(file_name, description, url)
+    h5ad.persist_to_database()
+    verify_gene_expression(session, bucket_id)
+
 
 def verify_bucket(session):
     """Verify Bucket Contents."""
@@ -39,6 +43,7 @@ def verify_bucket(session):
     assert first_bucket.name == "tabula-muris-mini.h5ad"
     assert first_bucket.description == "Mini h5ad test file"
     assert first_bucket.url == "http://mini-h5ad-test-file.com"
+    assert (repr(first_bucket).startswith("<Bucket(tabula-muris-mini.h5ad"))
     return first_bucket.id
 
 
@@ -59,13 +64,13 @@ def verify_annotation_keys(session, bucket_id):
 def verify_umap(session, bucket_id):
     """Verify UMAP Coordinates."""
     record = (
-        session.query(sca.ScatterPlot.coordinate_list)
+        session.query(sca.ScatterPlot)
         .filter_by(bucket_id=bucket_id, type=sca.ScatterPlotType.UMAP)
         .first()
     )
     target = "-0.437479,13.087562|-0.407288,2.570779|-1.995685,17.068936|"
     assert record.coordinate_list.startswith(target)
-
+    assert(repr(record).startswith("<ScatterPlot(vector of 101 elements)>"))
 
 def verify_gene_expression(session, bucket_id):
     """Verify Gene Expression Data."""
@@ -81,9 +86,10 @@ def verify_gene_expression(session, bucket_id):
 def verify_cell_ontology_values(session, annotation_id):
     """Verify cell ontology values."""
     record = (
-        session.query(ann.CellularAnnotation.value_list)
+        session.query(ann.CellularAnnotation)
         .filter_by(id=annotation_id)
         .first()
     )
     target = "epidermal cell|endothelial cell|basal cell|endothelial"
     assert record.value_list.startswith(target)
+    assert (repr(record).startswith("<CellularAnnotation(cell_ontology_class"))
