@@ -23,8 +23,9 @@ class DbConnection:
         # Create database and tables if they do not exist
         if not database_exists(self.db_connect_str):
             logging.info("Database does not exist.")
-            create_database(self.db_connect_str)
-        self._init_db_connections()
+            self._create_database()
+        else:
+            self._init_db_connections()
 
     def reset_database(self):
         """Reset the database and start with a clean slate."""
