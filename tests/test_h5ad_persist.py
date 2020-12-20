@@ -43,17 +43,17 @@ def verify_bucket(session):
     assert first_bucket.name == "tabula-muris-mini.h5ad"
     assert first_bucket.description == "Mini h5ad test file"
     assert first_bucket.url == "http://mini-h5ad-test-file.com"
-    assert (repr(first_bucket).startswith("<Bucket(tabula-muris-mini.h5ad"))
+    assert repr(first_bucket).startswith("<Bucket(tabula-muris-mini.h5ad")
     return first_bucket.id
 
 
 def verify_annotation_keys(session, bucket_id):
     """Verify cellular annotations keys."""
     record_list = (
-      session.query(ann.CellularAnnotation.key, ann.CellularAnnotation.id)
-      .filter_by(bucket_id=bucket_id, type=ann.CellularAnnotationType.OTHER)
-      .order_by(ann.CellularAnnotation.key)
-      .all()
+        session.query(ann.CellularAnnotation.key, ann.CellularAnnotation.id)
+        .filter_by(bucket_id=bucket_id, type=ann.CellularAnnotationType.OTHER)
+        .order_by(ann.CellularAnnotation.key)
+        .all()
     )
     assert len(record_list) == 12
     assert record_list[0][0] == "cell_ontology_class"
@@ -70,7 +70,8 @@ def verify_umap(session, bucket_id):
     )
     target = "-0.437479,13.087562|-0.407288,2.570779|-1.995685,17.068936|"
     assert record.coordinate_list.startswith(target)
-    assert(repr(record).startswith("<ScatterPlot(vector of 101 elements)>"))
+    assert repr(record).startswith("<ScatterPlot(vector of 101 elements)>")
+
 
 def verify_gene_expression(session, bucket_id):
     """Verify Gene Expression Data."""
@@ -83,13 +84,9 @@ def verify_gene_expression(session, bucket_id):
     assert record.value_list.startswith(target)
 
 
-def verify_cell_ontology_values(session, annotation_id):
+def verify_cell_ontology_values(session, a_id):
     """Verify cell ontology values."""
-    record = (
-        session.query(ann.CellularAnnotation)
-        .filter_by(id=annotation_id)
-        .first()
-    )
+    record = session.query(ann.CellularAnnotation).filter_by(id=a_id).first()
     target = "epidermal cell|endothelial cell|basal cell|endothelial"
     assert record.value_list.startswith(target)
-    assert (repr(record).startswith("<CellularAnnotation(cell_ontology_class"))
+    assert repr(record).startswith("<CellularAnnotation(cell_ontology_class")

@@ -3,8 +3,6 @@ import pytest
 from fastapi import HTTPException
 from luna.api import api
 from luna.h5ad.h5ad_persist import H5adDb
-from luna.db import cellular_annotation as ann
-from luna.db import scatter_plot as sca
 from luna.db.db_util import DbConnection
 
 
@@ -23,16 +21,16 @@ def load_sample_data():
 
 def test_api():
     """Test the Luna API."""
-    verify_buckets()
-    verify_annotation_keys()
-    verify_distinct_annotation_values()
-    verify_annotation_values()
-    verify_expression_data()
-    verify_umap()
-    verify_tsne()
+    _verify_buckets()
+    _verify_annotation_keys()
+    _verify_distinct_annotation_values()
+    _verify_annotation_values()
+    _verify_expression_data()
+    _verify_umap()
+    _verify_tsne()
 
 
-def verify_buckets():
+def _verify_buckets():
     res = api.get_buckets()
     assert len(res) == 1
     bucket0 = res[0]
@@ -41,7 +39,7 @@ def verify_buckets():
     assert bucket0.url == "http://mini-h5ad-test-file.com"
 
 
-def verify_annotation_keys():
+def _verify_annotation_keys():
     res = api.get_annotation_list(1)
     assert len(res) == 12
     assert res[0].key == "cell_ontology_class"
@@ -51,7 +49,7 @@ def verify_annotation_keys():
         res = api.get_annotation_list(-1)
 
 
-def verify_distinct_annotation_values():
+def _verify_distinct_annotation_values():
     res = api.get_distinct_annotation_values(1)
     assert len(res) == 37
     assert res[0] == "astrocyte"
@@ -61,7 +59,7 @@ def verify_distinct_annotation_values():
         res = api.get_distinct_annotation_values(-1)
 
 
-def verify_annotation_values():
+def _verify_annotation_values():
     res = api.get_annotation_values(1)
     assert len(res) == 100
     assert res[0] == "epidermal cell"
@@ -71,7 +69,7 @@ def verify_annotation_values():
         res = api.get_annotation_values(-1)
 
 
-def verify_expression_data():
+def _verify_expression_data():
     res = api.get_expression_values(1, "Egfr")
     assert len(res) == 100
     assert res[0] == 0.6931472
@@ -83,7 +81,8 @@ def verify_expression_data():
     with pytest.raises(HTTPException):
         res = api.get_expression_values(1, "Pten")
 
-def verify_umap():
+
+def _verify_umap():
     res = api.get_umap_coordinates(1)
     assert len(res) == 100
     assert res[0].x == -0.437479
@@ -92,7 +91,8 @@ def verify_umap():
     with pytest.raises(HTTPException):
         res = api.get_umap_coordinates(2)
 
-def verify_tsne():
+
+def _verify_tsne():
     res = api.get_tsne_coordinates(1)
     assert len(res) == 100
     assert res[0].x == -43.720875

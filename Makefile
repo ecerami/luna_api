@@ -9,9 +9,11 @@ freeze:
 
 lint:
 	$(LINTER) $(PROJ_SLUG)
+	$(LINTER) tests
 
 format:
 	$(FORMATTER) $(PROJ_SLUG)
+	$(FORMATTER) tests
 
 test:
 	py.test -s --cov-report term --cov=$(PROJ_SLUG) tests/
