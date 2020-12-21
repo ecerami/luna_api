@@ -4,6 +4,8 @@ PY_VERSION = 3.8
 LINTER = flake8
 FORMATTER = black
 
+check: format lint test
+
 freeze:
 	pip freeze > requirements.txt
 
@@ -20,8 +22,6 @@ qtest:
 
 test:
 	py.test -s --cov-report term --cov=$(PROJ_SLUG) tests/
-
-check: format lint test
 
 coverage:
 	py.test --cov-report html --cov=$(PROJ_SLUG) tests/
