@@ -27,7 +27,7 @@ def cli(verbose):
 def add_h5ad(config_file_name):
     """Add a new h5ad file to the database."""
     output_header("Adding data from config file:  %s." % config_file_name)
-    luna_config = LunaConfig.LunaConfig(config_file_name)
+    luna_config = LunaConfig(config_file_name)
 
     h5ad = H5adDb(
         luna_config.h5ad_file_name,
@@ -46,7 +46,7 @@ def add_h5ad(config_file_name):
 def downsample_h5ad(config_file_name, output_file_name, num_cells):
     """Downsample an h5ad file."""
     output_header("Using config file:  %s." % config_file_name)
-    luna_config = LunaConfig.LunaConfig(config_file_name)
+    luna_config = LunaConfig(config_file_name)
 
     down_sampler = H5adDownSample(
         luna_config.h5ad_file_name, num_cells, luna_config.gene_list
