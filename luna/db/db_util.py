@@ -20,18 +20,21 @@ class DbConnection:
             "LUNA_DB_CONNECT", default=DbConnection.DEFAULT_DB_CONNECT_STR
         )
 
-        # Create database and tables if they do not exist
+        self._init_db_connections()
         if not database_exists(self.db_connect_str):
             logging.info("Database does not exist.")
             self._create_database()
-        else:
-            self._init_db_connections()
 
     def reset_database(self):
         """Reset the database and start with a clean slate."""
         logging.info("Dropping database.")
         drop_database(self.db_connect_str)
         self._create_database()
+
+    def drop_database(self):
+        """Drop the database."""
+        logging.info("Dropping database.")
+        drop_database(self.db_connect_str)
 
     def _create_database(self):
         logging.info("Creating database with all tables.")

@@ -15,6 +15,9 @@ format:
 	$(FORMATTER) $(PROJ_SLUG)
 	$(FORMATTER) tests
 
+qtest:
+	py.test -s tests/
+
 test:
 	py.test -s --cov-report term --cov=$(PROJ_SLUG) tests/
 
