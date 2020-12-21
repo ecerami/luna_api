@@ -2,8 +2,8 @@ Packaging:
   ✔ Finalize the README File @done(20-12-18 11:07)
 
 Testing:
-  ☐ Add unit tests to downsampling class
-  ☐ Add unit tests to API endpoints
+  ✔ Add unit tests to downsampling class @done(20-12-20 19:55)
+  ✔ Add unit tests to API endpoints @done(20-12-20 19:55)
 
 Deploy to Linode:
   ✔ Deploy CLI to Linode @done(20-12-17 18:51)
