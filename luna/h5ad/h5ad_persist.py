@@ -109,7 +109,7 @@ class H5adDb:
                 self.bucket.id,
             )
             self.session.add(current_annotation)
-        self.session.commit()
+            self.session.commit()
 
     def _create_gene_index_lookup(self, var):
         gene_index = {}
