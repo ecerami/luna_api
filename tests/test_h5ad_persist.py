@@ -55,9 +55,9 @@ def verify_annotation_keys(session, bucket_id):
         .order_by(ann.CellularAnnotation.key)
         .all()
     )
-    assert len(record_list) == 12
+    assert len(record_list) == 9
     assert record_list[0][0] == "cell_ontology_class"
-    assert record_list[11][0] == "tissue"
+    assert record_list[8][0] == "tissue"
     return record_list[0][1]
 
 

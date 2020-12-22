@@ -19,17 +19,32 @@ app = FastAPI()
 class Bucket(BaseModel):
     """Bucket Object."""
 
+    id: int
     name: str
     description: Optional[str] = None
     url: Optional[str] = None
+
+
+class Annotation(BaseModel):
+    """Annotation Object."""
+
+    label: str
     id: int
 
 
-class AnnotationKey(BaseModel):
-    """Annotation Key Object."""
+class AnnotationBundle(Annotation):
+    """Annotation Bundle Object."""
 
-    key: str
-    id: int
+    values_distinct: List[str]
+    values_ordered: List[str]
+
+
+class ExpressionBundle(BaseModel):
+    """Expression Bundle Object."""
+
+    gene: str
+    max_expression: float
+    values_ordered: List[float]
 
 
 class Coordinate(BaseModel):
@@ -59,9 +74,9 @@ def get_buckets():
         session.close()
 
 
-@app.get("/annotations/{bucket_id}", response_model=List[AnnotationKey])
+@app.get("/annotation_list/{bucket_id}", response_model=List[Annotation])
 def get_annotation_list(bucket_id: int):
-    """Get the annotation keys for the specified bucket."""
+    """Get the list of annotations for the specified bucket."""
     session = _init_db_connection()
     target_type = ann.CellularAnnotationType.OTHER
     try:
@@ -77,23 +92,20 @@ def get_annotation_list(bucket_id: int):
 
         annotation_list = []
         for record in record_list:
-            current_annotation = AnnotationKey(key=record.key, id=record.id)
+            current_annotation = Annotation(label=record.key, id=record.id)
             annotation_list.append(current_annotation)
         return annotation_list
     finally:
         session.close()
 
 
-@app.get("/annotations/distinct/{annotation_id}", response_model=List[str])
-def get_distinct_annotation_values(annotation_id: int):
-    """Get the set of distinct values for the specified annotation ID."""
+@app.get("/annotation/{annotation_id}", response_model=AnnotationBundle)
+def get_annotation_values(annotation_id: int):
+    """Get the list of all values for the specified annotation ID."""
     session = _init_db_connection()
     try:
-        record = (
-            session.query(ann.CellularAnnotation.value_list)
-            .filter_by(id=annotation_id)
-            .first()
-        )
+        record = session.query(ann.CellularAnnotation)
+        record = record.filter_by(id=annotation_id).first()
 
         if record is None:
             raise HTTPException(status_code=404, detail="ID not found.")
@@ -104,43 +116,32 @@ def get_distinct_annotation_values(annotation_id: int):
             value = value.strip()
             distinct_set.add(value)
         distinct_list = list(distinct_set)
-        return natsorted(distinct_list, alg=ns.IGNORECASE)
-    finally:
-        session.close()
-
-
-@app.get("/annotations/all/{annotation_id}", response_model=List[str])
-def get_annotation_values(annotation_id: int):
-    """Get the list of all values for the specified annotation ID."""
-    session = _init_db_connection()
-    try:
-        record = (
-            session.query(ann.CellularAnnotation.value_list)
-            .filter_by(id=annotation_id)
-            .first()
-        )
-
-        if record is None:
-            raise HTTPException(status_code=404, detail="ID not found.")
+        distinct_list = natsorted(distinct_list, alg=ns.IGNORECASE)
 
         response_list = []
         value_list = record.value_list.split(DB_DELIM)
         for current_value in value_list:
             current_value = current_value.strip()
             response_list.append(current_value)
-        return response_list
+        current_annotation = AnnotationBundle(
+            label=record.key,
+            id=record.id,
+            values_distinct=distinct_list,
+            values_ordered=value_list,
+        )
+        return current_annotation
     finally:
         session.close()
 
 
-@app.get("/expression/{bucket_id}/{gene_symbol}", response_model=List[float])
-def get_expression_values(bucket_id: int, gene_symbol: str):
+@app.get("/expression/{bucket_id}/{gene}", response_model=ExpressionBundle)
+def get_expression_values(bucket_id: int, gene: str):
     """Get the expression data for the specified gene."""
     session = _init_db_connection()
     try:
         record = (
             session.query(ann.CellularAnnotation.value_list)
-            .filter_by(bucket_id=bucket_id, key=gene_symbol)
+            .filter_by(bucket_id=bucket_id, key=gene)
             .first()
         )
 
@@ -152,7 +153,13 @@ def get_expression_values(bucket_id: int, gene_symbol: str):
         for current_value in value_list:
             current_value = float(current_value.strip())
             response_list.append(current_value)
-        return response_list
+
+        expression_bundle = ExpressionBundle(
+            gene=gene,
+            max_expression=max(value_list),
+            values_ordered=value_list,
+        )
+        return expression_bundle
     finally:
         session.close()
 

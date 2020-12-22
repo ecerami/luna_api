@@ -22,8 +22,7 @@ def load_sample_data():
 def test_api():
     """Test the Luna API."""
     _verify_buckets()
-    _verify_annotation_keys()
-    _verify_distinct_annotation_values()
+    _verify_annotation_list()
     _verify_annotation_values()
     _verify_expression_data()
     _verify_umap()
@@ -39,31 +38,28 @@ def _verify_buckets():
     assert bucket0.url == "http://mini-h5ad-test-file.com"
 
 
-def _verify_annotation_keys():
+def _verify_annotation_list():
     res = api.get_annotation_list(1)
-    assert len(res) == 12
-    assert res[0].key == "cell_ontology_class"
-    assert res[1].key == "clusters_from_manuscript"
+    assert len(res) == 9
+    assert res[0].label == "cell_ontology_class"
+    assert res[1].label == "clusters_from_manuscript"
 
     with pytest.raises(HTTPException):
         res = api.get_annotation_list(-1)
 
 
-def _verify_distinct_annotation_values():
-    res = api.get_distinct_annotation_values(1)
-    assert len(res) == 37
-    assert res[0] == "astrocyte"
-    assert res[1] == "B cell"
-
-    with pytest.raises(HTTPException):
-        res = api.get_distinct_annotation_values(-1)
-
-
 def _verify_annotation_values():
     res = api.get_annotation_values(1)
-    assert len(res) == 100
-    assert res[0] == "epidermal cell"
-    assert res[1] == "endothelial cell"
+
+    values_distinct = res.values_distinct
+    assert len(values_distinct) == 37
+    assert values_distinct[0] == "astrocyte"
+    assert values_distinct[1] == "B cell"
+
+    values_list = res.values_ordered
+    assert len(values_list) == 100
+    assert values_list[0] == "epidermal cell"
+    assert values_list[1] == "endothelial cell"
 
     with pytest.raises(HTTPException):
         res = api.get_annotation_values(-1)
@@ -71,9 +67,13 @@ def _verify_annotation_values():
 
 def _verify_expression_data():
     res = api.get_expression_values(1, "Egfr")
-    assert len(res) == 100
-    assert res[0] == 0.6931472
-    assert res[1] == 0.6931472
+
+    assert res.max_expression == 7.354609
+
+    values_list = res.values_ordered
+    assert len(values_list) == 100
+    assert values_list[0] == 0.6931472
+    assert values_list[1] == 0.6931472
 
     with pytest.raises(HTTPException):
         res = api.get_expression_values(2, "Egfr")

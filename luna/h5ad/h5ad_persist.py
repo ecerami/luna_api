@@ -60,14 +60,18 @@ class H5adDb:
         column_list = obs.columns
         for column_name in column_list:
             current_value_list = obs[column_name].to_list()
-            logging.info("Persisting annotations:  %s." % column_name)
-            current_annotation = CellularAnnotation(
-                column_name,
-                CellularAnnotationType.OTHER,
-                current_value_list,
-                self.bucket.id,
-            )
-            self.session.add(current_annotation)
+            current_value_set = set(current_value_list)
+            if len(current_value_set) < 100:
+                logging.info("Persisting annotations:  %s." % column_name)
+                current_annotation = CellularAnnotation(
+                    column_name,
+                    CellularAnnotationType.OTHER,
+                    current_value_list,
+                    self.bucket.id,
+                )
+                self.session.add(current_annotation)
+            else:
+                logging.info("Skipping annotations:  %s." % column_name)
         self.session.commit()
 
     def _persist_scatter_plots(self):

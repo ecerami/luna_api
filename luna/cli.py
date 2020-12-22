@@ -24,7 +24,7 @@ def cli(verbose):
 
 @cli.command()
 @click.argument("config_file_name", type=click.Path(exists=True))
-def add_h5ad(config_file_name):
+def add(config_file_name):
     """Add a new h5ad file to the database."""
     output_header("Adding data from config file:  %s." % config_file_name)
     luna_config = LunaConfig(config_file_name)
@@ -43,7 +43,7 @@ def add_h5ad(config_file_name):
 @click.argument("config_file_name", type=click.Path(exists=True))
 @click.argument("output_file_name", type=click.Path())
 @click.option("--num_cells", type=click.INT, default=100, help="N cells.")
-def downsample_h5ad(config_file_name, output_file_name, num_cells):
+def downsample(config_file_name, output_file_name, num_cells):
     """Downsample an h5ad file."""
     output_header("Using config file:  %s." % config_file_name)
     luna_config = LunaConfig(config_file_name)
@@ -57,7 +57,7 @@ def downsample_h5ad(config_file_name, output_file_name, num_cells):
 
 
 @cli.command()
-def reset_db():
+def reset():
     """Reset the database."""
     output_header("Resetting database to a clean slate.")
     db_connection = DbConnection()
