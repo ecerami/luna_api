@@ -31,6 +31,12 @@ You are now ready to install the package:
 python setup.py install
 ```
 
+Alternatively, if you are actively developing the code, use:
+
+```
+python setup.py develop
+```
+
 ## PostgreSQL
 
 The Luna API requires a running instance of PostgreSQL.  You can find many tutorials on installing PostgreSQL, including this one on [installing PostgreSQL to Ubuntu](https://www.linode.com/docs/guides/how-to-install-postgresql-on-ubuntu-16-04/).
