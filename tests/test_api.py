@@ -5,6 +5,9 @@ from luna.api import api
 from luna.h5ad.h5ad_persist import H5adDb
 from luna.db.db_util import DbConnection
 
+BUCKET_SLUG = "tabula_muris_mini"
+BUCKET_SLUG_DOES_NOT_EXIST = "hello_world"
+
 
 @pytest.fixture(scope="module", autouse=True)
 def load_sample_data():
@@ -34,22 +37,23 @@ def _verify_buckets():
     assert len(res) == 1
     bucket0 = res[0]
     assert bucket0.name == "tabula-muris-mini.h5ad"
+    assert bucket0.slug == "tabula_muris_mini"
     assert bucket0.description == "Mini h5ad test file"
     assert bucket0.url == "http://mini-h5ad-test-file.com"
 
 
 def _verify_annotation_list():
-    res = api.get_annotation_list(1)
+    res = api.get_annotation_list(BUCKET_SLUG)
     assert len(res) == 9
     assert res[0].label == "cell_ontology_class"
     assert res[1].label == "clusters_from_manuscript"
 
     with pytest.raises(HTTPException):
-        res = api.get_annotation_list(-1)
+        res = api.get_annotation_list(BUCKET_SLUG_DOES_NOT_EXIST)
 
 
 def _verify_annotation_values():
-    res = api.get_annotation_values(1)
+    res = api.get_annotation_values(BUCKET_SLUG, "cell_ontology_class")
 
     values_distinct = res.values_distinct
     assert len(values_distinct) == 37
@@ -62,11 +66,11 @@ def _verify_annotation_values():
     assert values_list[1] == "endothelial cell"
 
     with pytest.raises(HTTPException):
-        res = api.get_annotation_values(-1)
+        res = api.get_annotation_values(BUCKET_SLUG_DOES_NOT_EXIST, "XXX")
 
 
 def _verify_expression_data():
-    res = api.get_expression_values(1, "Egfr")
+    res = api.get_expression_values(BUCKET_SLUG, "Egfr")
 
     assert res.max_expression == 7.354609
 
@@ -76,27 +80,27 @@ def _verify_expression_data():
     assert values_list[1] == 0.6931472
 
     with pytest.raises(HTTPException):
-        res = api.get_expression_values(2, "Egfr")
+        res = api.get_expression_values(BUCKET_SLUG_DOES_NOT_EXIST, "Egfr")
 
     with pytest.raises(HTTPException):
-        res = api.get_expression_values(1, "Pten")
+        res = api.get_expression_values(BUCKET_SLUG, "Pten")
 
 
 def _verify_umap():
-    res = api.get_umap_coordinates(1)
+    res = api.get_umap_coordinates("tabula_muris_mini")
     assert len(res) == 100
     assert res[0].x == -0.437479
     assert res[0].y == 13.087562
 
     with pytest.raises(HTTPException):
-        res = api.get_umap_coordinates(2)
+        res = api.get_umap_coordinates("hello")
 
 
 def _verify_tsne():
-    res = api.get_tsne_coordinates(1)
+    res = api.get_tsne_coordinates(BUCKET_SLUG)
     assert len(res) == 100
     assert res[0].x == -43.720875
     assert res[0].y == -48.974918
 
     with pytest.raises(HTTPException):
-        res = api.get_tsne_coordinates(2)
+        res = api.get_tsne_coordinates(BUCKET_SLUG_DOES_NOT_EXIST)

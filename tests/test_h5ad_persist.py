@@ -7,14 +7,14 @@ from luna.db import scatter_plot as sca
 from luna.db.db_util import DbConnection
 
 
-@pytest.fixture(scope="module", autouse=True)
+@pytest.fixture()
 def reset_db():
     """Fixture to ensure each test starts with a clean slate database."""
     db_connection = DbConnection()
     db_connection.reset_database()
 
 
-def test_h5ad_persist():
+def test_h5ad_persist_select_genes(reset_db):
     """Test Persisting of mini h5ad file to the database."""
     file_name = "examples/tabula-muris-mini.h5ad"
     gene_list = ["Egfr", "P2ry12", "Serpina1c"]
@@ -29,10 +29,21 @@ def test_h5ad_persist():
     verify_cell_ontology_values(session, annotation_id)
     verify_umap(session, bucket_id)
     verify_gene_expression(session, bucket_id)
+    session.close()
 
+
+def test_h5ad_persist_all_genes(reset_db):
+    file_name = "examples/tabula-muris-mini.h5ad"
+    gene_list = ["Egfr", "P2ry12", "Serpina1c"]
+    description = "Mini h5ad test file"
+    url = "http://mini-h5ad-test-file.com"
     h5ad = H5adDb(file_name, description, url)
     h5ad.persist_to_database()
+    db_connection = DbConnection()
+    session = db_connection.session
+    bucket_id = verify_bucket(session)
     verify_gene_expression(session, bucket_id)
+    session.close()
 
 
 def verify_bucket(session):
@@ -43,16 +54,16 @@ def verify_bucket(session):
     assert first_bucket.name == "tabula-muris-mini.h5ad"
     assert first_bucket.description == "Mini h5ad test file"
     assert first_bucket.url == "http://mini-h5ad-test-file.com"
-    assert repr(first_bucket).startswith("<Bucket(tabula-muris-mini.h5ad")
+    assert repr(first_bucket).startswith("<Bucket(tabula_muris_mini")
     return first_bucket.id
 
 
 def verify_annotation_keys(session, bucket_id):
     """Verify cellular annotations keys."""
     record_list = (
-        session.query(ann.CellularAnnotation.key, ann.CellularAnnotation.id)
+        session.query(ann.CellularAnnotation.slug, ann.CellularAnnotation.id)
         .filter_by(bucket_id=bucket_id, type=ann.CellularAnnotationType.OTHER)
-        .order_by(ann.CellularAnnotation.key)
+        .order_by(ann.CellularAnnotation.slug)
         .all()
     )
     assert len(record_list) == 9
@@ -77,7 +88,7 @@ def verify_gene_expression(session, bucket_id):
     """Verify Gene Expression Data."""
     record = (
         session.query(ann.CellularAnnotation.value_list)
-        .filter_by(bucket_id=bucket_id, key="Egfr")
+        .filter_by(bucket_id=bucket_id, slug="egfr")
         .first()
     )
     target = "0.6931472|0.6931472|4.1136827|0.6931472|0.6931472|0.6931472"

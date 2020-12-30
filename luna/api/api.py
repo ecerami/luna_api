@@ -19,7 +19,7 @@ app = FastAPI()
 class Bucket(BaseModel):
     """Bucket Object."""
 
-    id: int
+    slug: str
     name: str
     description: Optional[str] = None
     url: Optional[str] = None
@@ -28,8 +28,8 @@ class Bucket(BaseModel):
 class Annotation(BaseModel):
     """Annotation Object."""
 
+    slug: str
     label: str
-    id: int
 
 
 class AnnotationBundle(Annotation):
@@ -66,7 +66,7 @@ def get_buckets():
                 name=sql_bucket.name,
                 description=sql_bucket.description,
                 url=sql_bucket.url,
-                id=sql_bucket.id,
+                slug=sql_bucket.slug,
             )
             api_bucket_list.append(api_bucket)
         return api_bucket_list
@@ -74,38 +74,45 @@ def get_buckets():
         session.close()
 
 
-@app.get("/annotation_list/{bucket_id}", response_model=List[Annotation])
-def get_annotation_list(bucket_id: int):
+@app.get("/annotation_list/{bucket_slug}", response_model=List[Annotation])
+def get_annotation_list(bucket_slug: str):
     """Get the list of annotations for the specified bucket."""
     session = _init_db_connection()
     target_type = ann.CellularAnnotationType.OTHER
     try:
+        bucket_id = _get_bucket_id(session, bucket_slug)
         record_list = (
             session.query(ann.CellularAnnotation)
             .filter_by(bucket_id=bucket_id, type=target_type)
-            .order_by(ann.CellularAnnotation.key)
+            .order_by(ann.CellularAnnotation.slug)
             .all()
         )
 
         if len(record_list) == 0:
-            raise HTTPException(status_code=404, detail="Bucket not found.")
+            raise HTTPException(status_code=404, detail="No annotations.")
 
         annotation_list = []
-        for record in record_list:
-            current_annotation = Annotation(label=record.key, id=record.id)
+        for r in record_list:
+            current_annotation = Annotation(label=r.label, slug=r.slug)
             annotation_list.append(current_annotation)
         return annotation_list
     finally:
         session.close()
 
 
-@app.get("/annotation/{annotation_id}", response_model=AnnotationBundle)
-def get_annotation_values(annotation_id: int):
-    """Get the list of all values for the specified annotation ID."""
+@app.get(
+    "/annotation/{bucket_slug}/{annotation_slug}",
+    response_model=AnnotationBundle,
+)
+def get_annotation_values(bucket_slug: str, annotation_slug: str):
+    """Get the list of all values for the specified annotation."""
     session = _init_db_connection()
     try:
+        bucket_id = _get_bucket_id(session, bucket_slug)
         record = session.query(ann.CellularAnnotation)
-        record = record.filter_by(id=annotation_id).first()
+        record = record.filter_by(
+            bucket_id=bucket_id, slug=annotation_slug
+        ).first()
 
         if record is None:
             raise HTTPException(status_code=404, detail="ID not found.")
@@ -124,8 +131,8 @@ def get_annotation_values(annotation_id: int):
             current_value = current_value.strip()
             response_list.append(current_value)
         current_annotation = AnnotationBundle(
-            label=record.key,
-            id=record.id,
+            label=record.label,
+            slug=record.slug,
             values_distinct=distinct_list,
             values_ordered=value_list,
         )
@@ -134,14 +141,16 @@ def get_annotation_values(annotation_id: int):
         session.close()
 
 
-@app.get("/expression/{bucket_id}/{gene}", response_model=ExpressionBundle)
-def get_expression_values(bucket_id: int, gene: str):
+@app.get("/expression/{bucket_slug}/{gene}", response_model=ExpressionBundle)
+def get_expression_values(bucket_slug: str, gene: str):
     """Get the expression data for the specified gene."""
+    gene = gene.lower()
     session = _init_db_connection()
     try:
+        bucket_id = _get_bucket_id(session, bucket_slug)
         record = (
             session.query(ann.CellularAnnotation.value_list)
-            .filter_by(bucket_id=bucket_id, key=gene)
+            .filter_by(bucket_id=bucket_id, slug=gene)
             .first()
         )
 
@@ -164,11 +173,12 @@ def get_expression_values(bucket_id: int, gene: str):
         session.close()
 
 
-@app.get("/umap/{bucket_id}", response_model=List[Coordinate])
-def get_umap_coordinates(bucket_id: int):
+@app.get("/umap/{bucket_slug}", response_model=List[Coordinate])
+def get_umap_coordinates(bucket_slug: str):
     """Get the UMAP coordinates for the specified bucket."""
     session = _init_db_connection()
     try:
+        bucket_id = _get_bucket_id(session, bucket_slug)
         record = (
             session.query(sca.ScatterPlot.coordinate_list)
             .filter_by(bucket_id=bucket_id, type=sca.ScatterPlotType.UMAP)
@@ -183,11 +193,12 @@ def get_umap_coordinates(bucket_id: int):
         session.close()
 
 
-@app.get("/tsne/{bucket_id}", response_model=List[Coordinate])
-def get_tsne_coordinates(bucket_id: int):
+@app.get("/tsne/{bucket_slug}", response_model=List[Coordinate])
+def get_tsne_coordinates(bucket_slug: str):
     """Get the TSNE coordinates for the specified bucket."""
     session = _init_db_connection()
     try:
+        bucket_id = _get_bucket_id(session, bucket_slug)
         record = (
             session.query(sca.ScatterPlot.coordinate_list)
             .filter_by(bucket_id=bucket_id, type=sca.ScatterPlotType.TSNE)
@@ -200,6 +211,14 @@ def get_tsne_coordinates(bucket_id: int):
         return _extract_coordinates(record)
     finally:
         session.close()
+
+
+def _get_bucket_id(session, bucket_slug):
+    record = session.query(bucket.Bucket).filter_by(slug=bucket_slug).first()
+    if record:
+        return record.id
+    else:
+        raise HTTPException(status_code=404, detail="Bucket not found")
 
 
 def _extract_coordinates(record):

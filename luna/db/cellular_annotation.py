@@ -1,4 +1,5 @@
 """Cellular Annotation."""
+from luna.db.slug import SlugUtil
 from luna.db.base import Base, DB_DELIM
 from sqlalchemy import Column, Integer, String
 from sqlalchemy import ForeignKey
@@ -20,7 +21,8 @@ class CellularAnnotation(Base):
     __tablename__ = "cellular_annotation"
 
     id = Column(Integer, primary_key=True)
-    key = Column(String)
+    slug = Column(String)
+    label = Column(String)
     type = Column(Enum(CellularAnnotationType))
     value_list = Column(String)
     bucket_id = Column(Integer, ForeignKey("bucket.id"))
@@ -28,7 +30,9 @@ class CellularAnnotation(Base):
 
     def __init__(self, key, type, value_list, bucket_id):
         """Create new CellularAnnotation Object."""
-        self.key = key
+        slugger = SlugUtil()
+        self.label = key
+        self.slug = slugger.sluggify(key)
         self.type = type
         self.value_list = DB_DELIM.join(map(str, value_list))
         self.bucket_id = bucket_id
@@ -37,7 +41,7 @@ class CellularAnnotation(Base):
         """Get CellularAnnotation Summary."""
         token_list = self.value_list.split(DB_DELIM)
         return "<CellularAnnotation(%s, type=%s, vector of %d elements)>" % (
-            self.key,
+            self.slug,
             self.type,
             len(token_list),
         )
