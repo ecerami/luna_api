@@ -2,7 +2,7 @@ PROJ_SLUG = luna
 CLI_NAME = luna
 PY_VERSION = 3.8
 LINTER = flake8
-FORMATTER = black
+FORMATTER = black -l 80 --experimental-string-processing
 
 check: format lint test
 
