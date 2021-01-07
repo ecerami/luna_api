@@ -12,9 +12,22 @@ from luna.db import bucket
 from luna.db import cellular_annotation as ann
 from luna.db import scatter_plot as sca
 from luna.db.base import DB_DELIM
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
+origins = [
+    "http://luna-alpha.surge.sh/",
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class Bucket(BaseModel):
     """Bucket Object."""
