@@ -11,7 +11,7 @@ class VignetteValidator:
         self.vignette_file_name = vingette_file_name
 
     def validate(self):
-        "Validate against vignette schema."
+        """Validate against vignette schema."""
         with open(self.vignette_file_name) as f:
             vignette_json = json.load(f)
         with open("schemas/vignette_schema.json") as f:

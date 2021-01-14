@@ -1,5 +1,4 @@
 """Vignette object for storing a multiple vignettes."""
-from luna.db.slug import SlugUtil
 from luna.db.base import Base
 from sqlalchemy import Column, Integer, String
 from sqlalchemy import ForeignKey

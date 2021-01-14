@@ -3,6 +3,7 @@ import pytest
 from fastapi import HTTPException
 from luna.api import api
 from luna.h5ad.h5ad_persist import H5adDb
+from luna.vignette.vignette_persist import VignetteDb
 from luna.db.db_util import DbConnection
 
 BUCKET_SLUG = "tabula_muris_mini"
@@ -21,6 +22,11 @@ def load_sample_data():
     h5ad = H5adDb(file_name, description, url, gene_list)
     h5ad.persist_to_database()
 
+    # Add the Vignettes
+    vignette_file = "tests/data/vignette_valid_mini.json"
+    vignette_db = VignetteDb(vignette_file)
+    vignette_db.persist_to_database()
+
 
 def test_api():
     """Test the Luna API."""
@@ -30,6 +36,7 @@ def test_api():
     _verify_expression_data()
     _verify_umap()
     _verify_tsne()
+    _verify_vignettes()
 
 
 def _verify_buckets():
@@ -104,3 +111,11 @@ def _verify_tsne():
 
     with pytest.raises(HTTPException):
         res = api.get_tsne_coordinates(BUCKET_SLUG_DOES_NOT_EXIST)
+
+
+def _verify_vignettes():
+    res = api.get_vignettes(BUCKET_SLUG)
+    assert res.body.startswith(b'{"bucket_slug":')
+
+    with pytest.raises(HTTPException):
+        res = api.get_vignettes(BUCKET_SLUG_DOES_NOT_EXIST)

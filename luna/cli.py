@@ -58,6 +58,7 @@ def add_vignettes(vignette_file_name):
             "File:  %s is invalid:  %s" % (vignette_file_name, error.message)
         )
 
+
 @cli.command()
 @click.argument("config_file_name", type=click.Path(exists=True))
 @click.argument("output_file_name", type=click.Path())

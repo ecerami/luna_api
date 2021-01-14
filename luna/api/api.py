@@ -3,12 +3,13 @@ Luna API.
 
 API is written via FastAPI.
 """
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Response
 from pydantic import BaseModel
 from typing import List, Optional
 from natsort import natsorted, ns
 from luna.db.db_util import DbConnection
 from luna.db import bucket
+from luna.db import vignette
 from luna.db import cellular_annotation as ann
 from luna.db import scatter_plot as sca
 from luna.db.base import DB_DELIM
@@ -31,6 +32,12 @@ class Bucket(BaseModel):
     name: str
     description: Optional[str] = None
     url: Optional[str] = None
+
+
+class Vignettes(BaseModel):
+    """Vignettes Object."""
+
+    content: str
 
 
 class Annotation(BaseModel):
@@ -217,6 +224,25 @@ def get_tsne_coordinates(bucket_slug: str):
             raise HTTPException(status_code=404, detail="No data found.")
 
         return _extract_coordinates(record)
+    finally:
+        session.close()
+
+
+@app.get("/vignettes/{bucket_slug}")
+def get_vignettes(bucket_slug: str):
+    """Get all Vignettes for the specified bucket."""
+    session = _init_db_connection()
+    try:
+        bucket_id = _get_bucket_id(session, bucket_slug)
+        record = (
+            session.query(vignette.Vignette)
+            .filter_by(bucket_id=bucket_id)
+            .first()
+        )
+
+        if record is None:
+            raise HTTPException(status_code=404, detail="No data found.")
+        return Response(content=record.json, media_type="application/json")
     finally:
         session.close()
 
