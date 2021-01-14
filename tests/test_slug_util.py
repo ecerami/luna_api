@@ -1,6 +1,5 @@
 """Tests for Slug Util."""
 from luna.db.slug import SlugUtil
-import pytest
 
 
 def test_sluggify():

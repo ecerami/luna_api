@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "bucket_slug": {
+      "type": "string"
+    },
+    "vignettes": {
+      "type": "array",
+      "items": {
+          "type": "object",
+          "properties": {
+            "slug": {
+              "type": "string"
+            },
+            "label": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "gene": {
+              "type": "string"
+            },
+            "hex_bin_radius": {
+              "type": "integer"
+            },
+            "elevation_by": {
+              "type": "string"
+            },
+            "elevation_scale": {
+              "type": "integer"
+            },
+            "color_by": {
+              "type": "string"
+            },
+            "active": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "required": [
+            "slug",
+            "label"
+          ]
+        }
+    }
+  },
+  "required": [
+    "bucket_slug",
+    "vignettes"
+  ]
+}

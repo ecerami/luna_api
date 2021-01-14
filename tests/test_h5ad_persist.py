@@ -15,7 +15,7 @@ def reset_db():
 
 
 def test_h5ad_persist_select_genes(reset_db):
-    """Test Persisting of mini h5ad file to the database."""
+    """Test Persisting of mini h5ad file, select genes to the database."""
     file_name = "examples/tabula-muris-mini.h5ad"
     gene_list = ["Egfr", "P2ry12", "Serpina1c"]
     description = "Mini h5ad test file"
@@ -33,8 +33,8 @@ def test_h5ad_persist_select_genes(reset_db):
 
 
 def test_h5ad_persist_all_genes(reset_db):
+    """Test Persisting of mini h5ad file, all genes to the database."""
     file_name = "examples/tabula-muris-mini.h5ad"
-    gene_list = ["Egfr", "P2ry12", "Serpina1c"]
     description = "Mini h5ad test file"
     url = "http://mini-h5ad-test-file.com"
     h5ad = H5adDb(file_name, description, url)

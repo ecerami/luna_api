@@ -7,7 +7,10 @@ import logging
 from luna.config.luna_config import LunaConfig
 import click
 import emoji
+from jsonschema.exceptions import ValidationError
 from luna.h5ad.h5ad_persist import H5adDb
+from luna.vignette.vignette_validator import VignetteValidator
+from luna.vignette.vignette_persist import VignetteDb
 from luna.h5ad.h5ad_downsample import H5adDownSample
 from luna.db.db_util import DbConnection
 
@@ -40,6 +43,22 @@ def add(config_file_name):
 
 
 @cli.command()
+@click.argument("vignette_file_name", type=click.Path(exists=True))
+def add_vignettes(vignette_file_name):
+    """Add a new set of vignettes to the database."""
+    output_header("Adding vignettes file:  %s." % vignette_file_name)
+    vignette_validator = VignetteValidator(vignette_file_name)
+    try:
+        vignette_validator.validate()
+        vignette_db = VignetteDb(vignette_file_name)
+        vignette_db.persist_to_database()
+        output_header(emoji.emojize("Done! :beer:", use_aliases=True))
+    except ValidationError as error:
+        output_error(
+            "File:  %s is invalid:  %s" % (vignette_file_name, error.message)
+        )
+
+@cli.command()
 @click.argument("config_file_name", type=click.Path(exists=True))
 @click.argument("output_file_name", type=click.Path())
 @click.option("--num_cells", type=click.INT, default=100, help="N cells.")
@@ -68,3 +87,9 @@ def reset():
 def output_header(msg):
     """Output header with emphasis."""
     click.echo(click.style(msg, fg="green"))
+
+
+def output_error(msg):
+    """Output error message with emphasis."""
+    msg = emoji.emojize(":warning:  %s" % msg, use_aliases=True)
+    click.echo(click.style(msg, fg="yellow"))
