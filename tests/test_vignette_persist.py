@@ -36,10 +36,11 @@ def test_valid_bucket(reset_db):
     assert repr(record).startswith("<Vignettes(")
     session.close()
 
+
 def test_missing_bucket(reset_db):
     """Test JSON with Valid Bucket Slug."""
     # Add the Vignettes
     vignette_file = "tests/data/vignette_valid.json"
     vignette_db = VignetteDb(vignette_file)
-    with pytest.raises(ValidationError) as validation_error:
-      vignette_db.persist_to_database()
+    with pytest.raises(ValidationError):
+        vignette_db.persist_to_database()

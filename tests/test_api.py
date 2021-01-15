@@ -6,7 +6,7 @@ from luna.h5ad.h5ad_persist import H5adDb
 from luna.vignette.vignette_persist import VignetteDb
 from luna.db.db_util import DbConnection
 from luna.db import cellular_annotation as ann
-from luna.db import scatter_plot as sca 
+from luna.db import scatter_plot as sca
 
 
 BUCKET_SLUG = "tabula_muris_mini"
@@ -42,7 +42,7 @@ def _load_sample_data():
 
 
 def test_api(load_sample_data_and_vignettes):
-    """Test the Luna API with Vignettes"""
+    """Test the Luna API with Vignettes."""
     _verify_buckets()
     _verify_annotation_list()
     _verify_annotation_values()
@@ -53,12 +53,13 @@ def test_api(load_sample_data_and_vignettes):
 
 
 def test_api_no_vignettes(load_sample_data_no_vignettes):
-    """Test the Luna API without Vignettes"""
+    """Test the Luna API without Vignettes."""
     with pytest.raises(HTTPException):
-        res = api.get_vignettes(BUCKET_SLUG)
+        api.get_vignettes(BUCKET_SLUG)
 
 
 def test_api_no_annotations(load_sample_data_and_vignettes):
+    """Test the Luna API with No Annotations, No Coordinates."""
     db_connection = DbConnection()
     session = db_connection.session
     session.query(ann.CellularAnnotation).delete()
