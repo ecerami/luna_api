@@ -5,14 +5,32 @@ from luna.api import api
 from luna.h5ad.h5ad_persist import H5adDb
 from luna.vignette.vignette_persist import VignetteDb
 from luna.db.db_util import DbConnection
+from luna.db import cellular_annotation as ann
+from luna.db import scatter_plot as sca 
+
 
 BUCKET_SLUG = "tabula_muris_mini"
 BUCKET_SLUG_DOES_NOT_EXIST = "hello_world"
 
 
-@pytest.fixture(scope="module", autouse=True)
-def load_sample_data():
-    """Fixture to ensure each test starts with a pre-populated database."""
+@pytest.fixture()
+def load_sample_data_and_vignettes():
+    """Fixture to load sample data and sample vignettes."""
+    _load_sample_data()
+
+    # Add the Vignettes
+    vignette_file = "tests/data/vignette_valid_mini.json"
+    vignette_db = VignetteDb(vignette_file)
+    vignette_db.persist_to_database()
+
+
+@pytest.fixture()
+def load_sample_data_no_vignettes():
+    """Fixture to load sample data but no vignettes."""
+    _load_sample_data()
+
+
+def _load_sample_data():
     db_connection = DbConnection()
     db_connection.reset_database()
     file_name = "examples/tabula-muris-mini.h5ad"
@@ -22,14 +40,9 @@ def load_sample_data():
     h5ad = H5adDb(file_name, description, url, gene_list)
     h5ad.persist_to_database()
 
-    # Add the Vignettes
-    vignette_file = "tests/data/vignette_valid_mini.json"
-    vignette_db = VignetteDb(vignette_file)
-    vignette_db.persist_to_database()
 
-
-def test_api():
-    """Test the Luna API."""
+def test_api(load_sample_data_and_vignettes):
+    """Test the Luna API with Vignettes"""
     _verify_buckets()
     _verify_annotation_list()
     _verify_annotation_values()
@@ -37,6 +50,28 @@ def test_api():
     _verify_umap()
     _verify_tsne()
     _verify_vignettes()
+
+
+def test_api_no_vignettes(load_sample_data_no_vignettes):
+    """Test the Luna API without Vignettes"""
+    with pytest.raises(HTTPException):
+        res = api.get_vignettes(BUCKET_SLUG)
+
+
+def test_api_no_annotations(load_sample_data_and_vignettes):
+    db_connection = DbConnection()
+    session = db_connection.session
+    session.query(ann.CellularAnnotation).delete()
+    session.query(sca.ScatterPlot.coordinate_list).delete()
+    session.query(sca.ScatterPlot.coordinate_list).delete()
+    session.commit()
+    session.close()
+    with pytest.raises(HTTPException):
+        api.get_annotation_list(BUCKET_SLUG)
+    with pytest.raises(HTTPException):
+        api.get_umap_coordinates(BUCKET_SLUG)
+    with pytest.raises(HTTPException):
+        api.get_tsne_coordinates(BUCKET_SLUG)
 
 
 def _verify_buckets():
@@ -74,6 +109,9 @@ def _verify_annotation_values():
 
     with pytest.raises(HTTPException):
         res = api.get_annotation_values(BUCKET_SLUG_DOES_NOT_EXIST, "XXX")
+
+    with pytest.raises(HTTPException):
+        res = api.get_annotation_values(BUCKET_SLUG, "XXXX")
 
 
 def _verify_expression_data():

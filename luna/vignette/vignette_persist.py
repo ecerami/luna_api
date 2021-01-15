@@ -30,6 +30,7 @@ class VignetteDb:
             self.session.add(vignette)
             self.session.commit()
             logging.info("Got Vignette ID: %d" % vignette.id)
+            self.session.close()
 
     def _get_bucket_id(self, bucket_slug):
         record = self.session.query(bucket.Bucket).filter_by(slug=bucket_slug)

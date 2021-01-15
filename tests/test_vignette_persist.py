@@ -4,6 +4,7 @@ import pytest
 from luna.db.bucket import Bucket
 from luna.vignette.vignette_persist import VignetteDb
 from luna.db.db_util import DbConnection
+from jsonschema.exceptions import ValidationError
 
 
 @pytest.fixture()
@@ -13,7 +14,7 @@ def reset_db():
     db_connection.reset_database()
 
 
-def test_valid_bucket():
+def test_valid_bucket(reset_db):
     """Test JSON with Valid Bucket Slug."""
     # Add a bucket, so that we can refer to it in the vignettes
     bucket = Bucket("tabula_muris", "Description", "URL")
@@ -33,3 +34,12 @@ def test_valid_bucket():
     record = record_list[0]
     assert record.json.startswith('{"bucket_slug": "tabula_muris"')
     assert repr(record).startswith("<Vignettes(")
+    session.close()
+
+def test_missing_bucket(reset_db):
+    """Test JSON with Valid Bucket Slug."""
+    # Add the Vignettes
+    vignette_file = "tests/data/vignette_valid.json"
+    vignette_db = VignetteDb(vignette_file)
+    with pytest.raises(ValidationError) as validation_error:
+      vignette_db.persist_to_database()
