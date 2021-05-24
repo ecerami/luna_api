@@ -163,12 +163,7 @@ def get_expression_values(bucket_slug: str, gene: str):
         if record is None:
             raise HTTPException(status_code=404, detail="No data found.")
 
-        response_list = []
         value_list = record.value_list.split(DB_DELIM)
-        for current_value in value_list:
-            current_value = float(current_value.strip())
-            response_list.append(current_value)
-
         expression_bundle = ExpressionBundle(
             gene=gene,
             max_expression=max(value_list),
