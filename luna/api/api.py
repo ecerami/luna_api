@@ -132,19 +132,10 @@ def get_annotation_values(bucket_slug: str, annotation_slug: str):
         if record is None:
             raise HTTPException(status_code=404, detail="ID not found.")
 
-        distinct_set = set()
         value_list = record.value_list.split(DB_DELIM)
-        for value in value_list:
-            value = value.strip()
-            distinct_set.add(value)
-        distinct_list = list(distinct_set)
+        distinct_list = list({value.strip() for value in value_list})
         distinct_list = natsorted(distinct_list, alg=ns.IGNORECASE)
 
-        response_list = []
-        value_list = record.value_list.split(DB_DELIM)
-        for current_value in value_list:
-            current_value = current_value.strip()
-            response_list.append(current_value)
         current_annotation = AnnotationBundle(
             label=record.label,
             slug=record.slug,
