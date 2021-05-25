@@ -29,7 +29,7 @@ def cli(verbose):
 @click.argument("config_file_name", type=click.Path(exists=True))
 def add(config_file_name):
     """Add a new h5ad file to the database."""
-    output_header("Adding data from config file:  %s." % config_file_name)
+    output_header(f"Adding data from config file:  {config_file_name}.")
     luna_config = LunaConfig(config_file_name)
 
     h5ad = H5adDb(
@@ -46,7 +46,7 @@ def add(config_file_name):
 @click.argument("vignette_file_name", type=click.Path(exists=True))
 def add_vignettes(vignette_file_name):
     """Add a new set of vignettes to the database."""
-    output_header("Adding vignettes file:  %s." % vignette_file_name)
+    output_header(f"Adding vignettes file:  {vignette_file_name}.")
     vignette_validator = VignetteValidator(vignette_file_name)
     try:
         vignette_validator.validate()
@@ -55,7 +55,7 @@ def add_vignettes(vignette_file_name):
         output_header(emoji.emojize("Done! :beer:", use_aliases=True))
     except ValidationError as error:
         output_error(
-            "File:  %s is invalid:  %s" % (vignette_file_name, error.message)
+            f"File:  {vignette_file_name} is invalid:  {error.message}"
         )
 
 
@@ -65,14 +65,14 @@ def add_vignettes(vignette_file_name):
 @click.option("--num_cells", type=click.INT, default=100, help="N cells.")
 def downsample(config_file_name, output_file_name, num_cells):
     """Downsample an h5ad file."""
-    output_header("Using config file:  %s." % config_file_name)
+    output_header(f"Using config file:  {config_file_name}.")
     luna_config = LunaConfig(config_file_name)
 
     down_sampler = H5adDownSample(
         luna_config.h5ad_file_name, num_cells, luna_config.gene_list
     )
     down_sampler.save(output_file_name)
-    output_header("Writing new data to:  %s." % output_file_name)
+    output_header(f"Writing new data to:  {output_file_name}.")
     output_header(emoji.emojize("Done! :beer:", use_aliases=True))
 
 
@@ -92,5 +92,5 @@ def output_header(msg):
 
 def output_error(msg):
     """Output error message with emphasis."""
-    msg = emoji.emojize(":warning:  %s" % msg, use_aliases=True)
+    msg = emoji.emojize(f":warning:  {msg}", use_aliases=True)
     click.echo(click.style(msg, fg="yellow"))

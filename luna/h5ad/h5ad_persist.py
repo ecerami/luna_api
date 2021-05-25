@@ -47,11 +47,11 @@ class H5adDb:
         self._persist_x()
 
     def _persist_bucket(self):
-        logging.info("Persisting bucket: %s" % self.base_file_name)
+        logging.info(f"Persisting bucket: {self.base_file_name}.")
         self.bucket = Bucket(self.base_file_name, self.description, self.url)
         self.session.add(self.bucket)
         self.session.commit()
-        logging.info("Got Bucket ID: %d" % self.bucket.id)
+        logging.info(f"Got Bucket ID: {self.bucket.id}.")
 
     def _persist_annotations(self):
         # Annotations are in .obs
@@ -62,7 +62,7 @@ class H5adDb:
             current_value_list = obs[column_name].to_list()
             current_value_set = set(current_value_list)
             if len(current_value_set) < 100:
-                logging.info("Persisting annotations:  %s." % column_name)
+                logging.info(f"Persisting annotations:  {column_name}.")
                 current_annotation = CellularAnnotation(
                     column_name,
                     CellularAnnotationType.OTHER,
@@ -71,7 +71,7 @@ class H5adDb:
                 )
                 self.session.add(current_annotation)
             else:
-                logging.info("Skipping annotations:  %s." % column_name)
+                logging.info(f"Skipping annotations:  {column_name}.")
         self.session.commit()
 
     def _persist_scatter_plots(self):
@@ -83,7 +83,7 @@ class H5adDb:
 
     def _persist_scatter_plot(self, obsm, obsm_key, scatter_plot_type):
         if obsm_key in obsm:
-            logging.info("Persisting: %s." % obsm_key)
+            logging.info(f"Persisting: {obsm_key}.")
             scatter_plot = ScatterPlot(
                 scatter_plot_type, obsm[obsm_key], self.bucket.id
             )
@@ -104,7 +104,7 @@ class H5adDb:
 
         for current_gene in self.gene_list:
             index = gene_index[current_gene]
-            logging.info("Persisting: %s, index=%d." % (current_gene, index))
+            logging.info(f"Persisting: {current_gene}, index={index}.")
             slice = x[0:rows, index]
             current_annotation = CellularAnnotation(
                 current_gene,

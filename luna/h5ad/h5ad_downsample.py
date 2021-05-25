@@ -27,8 +27,8 @@ class H5adDownSample:
         x = adata.X
         gene_index = self._create_gene_index_lookup(adata.var)
         num_rows = min(x.shape[0], self.num_cells)
-        logging.info("Restricting new file to %d cells." % num_rows)
-        logging.info("Restricting new file to %d genes." % len(self.gene_list))
+        logging.info(f"Restricting new file to {num_rows} cells.")
+        logging.info(f"Restricting new file to {len(self.gene_list)} genes.")
 
         d_x = self._get_downsampled_x(x, self.gene_list, gene_index, num_rows)
         d_var = adata.var.loc[self.gene_list]
@@ -41,7 +41,7 @@ class H5adDownSample:
         new_x = []
         for gene in gene_list:
             index = gene_index[gene]
-            logging.info("Extracting: %s, index=%d." % (gene, index))
+            logging.info(f"Extracting: {gene}, index={index}.")
             new_x.append(x[0:num_rows, index])
         new_x = np.column_stack(new_x)
         return new_x
@@ -49,7 +49,7 @@ class H5adDownSample:
     def _get_downsampled_obsm(self, obsm, num_rows):
         new_obsm = {}
         for key in obsm.keys():
-            logging.info("Extracting: %s." % key)
+            logging.info(f"Extracting: {key}.")
             new_obsm[key] = obsm[key][0:num_rows]
         return new_obsm
 

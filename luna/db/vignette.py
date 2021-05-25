@@ -22,4 +22,4 @@ class Vignette(Base):
 
     def __repr__(self):
         """Get Vignettes Summary."""
-        return "<Vignettes(%s)>" % (self.bucket_id)
+        return f"<Vignettes({self.bucket_id}))>"

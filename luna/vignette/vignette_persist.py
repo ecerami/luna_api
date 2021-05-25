@@ -29,7 +29,7 @@ class VignetteDb:
             vignette = Vignette(bucket_id, json.dumps(vignette_json))
             self.session.add(vignette)
             self.session.commit()
-            logging.info("Got Vignette ID: %d" % vignette.id)
+            logging.info(f"Got Vignette ID: {vignette.id}.")
             self.session.close()
 
     def _get_bucket_id(self, bucket_slug):

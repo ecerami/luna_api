@@ -26,4 +26,4 @@ class Bucket(Base):
 
     def __repr__(self):
         """Get bucket summary."""
-        return "<Bucket(%s, %s)>" % (self.slug, self.description)
+        return f"<Bucket({self.slug}, {self.description})>"
