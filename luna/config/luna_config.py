@@ -23,13 +23,13 @@ class LunaConfig:
         # jsonschema.exceptions.ValidationError
         validate(instance=luna_json, schema=schema_json)
 
-        if "h5ad" in luna_json:
-            h5ad = luna_json["h5ad"]        
-            self.h5ad_file_name = h5ad["file_name"]
-            self.h5ad_description = h5ad["description"]
-            self.h5ad_url = h5ad["url"]
+        if "bucket" in luna_json:
+            bucket = luna_json["bucket"]        
+            self.h5ad_file_name = bucket["file_name"]
+            self.h5ad_description = bucket["description"]
+            self.h5ad_url = bucket["url"]
 
-        if "genes" in luna_json:
-            self.gene_list = luna_json["genes"]
-        else:
-            self.gene_list = None
+            if "genes" in bucket:
+                self.gene_list = bucket["genes"]
+            else:
+                self.gene_list = None

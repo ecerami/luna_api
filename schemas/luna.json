@@ -2,7 +2,7 @@
     "$schema": "http://json-schema.org/draft-04/schema#",
     "type": "object",
     "properties": {
-      "h5ad": {
+      "bucket": {
         "type": "object",
         "properties": {
           "file_name": {
@@ -13,6 +13,14 @@
           },
           "url": {
             "type": "string"
+          },
+          "genes": {
+            "type": "array",
+            "items": [
+              {
+                "type": "string"
+              }
+            ]
           }
         },
         "required": [
@@ -20,17 +28,9 @@
           "description",
           "url"
         ]
-      },
-      "genes": {
-        "type": "array",
-        "items": [
-          {
-            "type": "string"
-          }
-        ]
       }
     },
     "required": [
-      "h5ad"
+      "bucket"
     ]
   }
