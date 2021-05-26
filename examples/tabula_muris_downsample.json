@@ -1,0 +1,10 @@
+{
+    "h5ad": {
+        "file_name": "examples/tabula-muris.h5ad"
+    },
+    "genes": [
+        "Egfr", 
+        "P2ry12",
+        "Serpina1c"
+    ]
+}
