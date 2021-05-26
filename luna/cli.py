@@ -7,6 +7,7 @@ import logging
 from luna.config.luna_config import LunaConfig
 import click
 import emoji
+from sqlalchemy import exc
 from jsonschema.exceptions import ValidationError
 from luna.h5ad.h5ad_persist import H5adDb
 from luna.vignette.vignette_validator import VignetteValidator
@@ -38,9 +39,11 @@ def add(config_file_name):
         luna_config.h5ad_url,
         luna_config.gene_list,
     )
-    h5ad.persist_to_database()
-    output_header(emoji.emojize("Done! :beer:", use_aliases=True))
-
+    try:
+        h5ad.persist_to_database()
+        output_header(emoji.emojize("Done! :beer:", use_aliases=True))
+    except exc.IntegrityError as error:
+        output_error(f"Cannot add file:  {error.__str__}")
 
 @cli.command()
 @click.argument("vignette_file_name", type=click.Path(exists=True))
