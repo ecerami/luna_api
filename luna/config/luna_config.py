@@ -2,6 +2,7 @@
 import json
 from jsonschema import validate
 
+
 class LunaConfig:
     """Luna Config Class."""
 
@@ -12,7 +13,6 @@ class LunaConfig:
 
     def __init__(self, config_file_name):
         """Create Config Object with specified configuration JSON."""
-
         with open("schemas/luna.json") as f:
             schema_json = json.load(f)
 
@@ -24,7 +24,7 @@ class LunaConfig:
         validate(instance=luna_json, schema=schema_json)
 
         if "bucket" in luna_json:
-            bucket = luna_json["bucket"]        
+            bucket = luna_json["bucket"]
             self.h5ad_file_name = bucket["file_name"]
             self.h5ad_description = bucket["description"]
             self.h5ad_url = bucket["url"]

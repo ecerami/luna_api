@@ -45,6 +45,7 @@ def add(config_file_name):
     except exc.IntegrityError as error:
         output_error(f"Cannot add file:  {error.__str__}")
 
+
 @cli.command()
 @click.argument("vignette_file_name", type=click.Path(exists=True))
 def add_vignettes(vignette_file_name):

@@ -81,9 +81,10 @@ Options:
   --help     Show this message and exit.
 
 Commands:
-  add-h5ad         Add a new h5ad file to the database.
-  downsample-h5ad  Downsample an h5ad file.
-  reset-db         Reset the database.
+  add            Add a new h5ad file to the database.
+  add-vignettes  Add a new set of vignettes to the database.
+  downsample     Downsample an h5ad file.
+  reset          Reset the database.
 ```
 
 # Example Data
@@ -98,18 +99,18 @@ wget https://cellxgene-example-data.czi.technology/tabula-muris.h5ad
 
 # Loading Data
 
-To load an h5ad file, you must first create an ```.ini``` configuration file.  Here is an [example configuration file](examples/tabula_muris_mini.ini) for loading the [mini h5ad](/examples/tabula_muris_mini.h5ad) file.  In the config file, you can specify a ```genes``` section with specific genes to imported;  if you remove the ```genes``` section, all genes in the h5ad file will be imported.
+To load an h5ad file, you must first create an ```.json``` configuration file.  Here is an [example configuration file](examples/tabula_muris_mini.json) for loading the [mini h5ad](/examples/tabula_muris_mini.h5ad) file.  In the config file, you can specify a ```genes``` section with specific genes to imported;  if you remove the ```genes``` section, all genes in the h5ad file will be imported.
 
 To import the data, you then run:
 
 ```
-luna add-h5ad examples/tabula_muris_mini.ini
+luna add-h5ad examples/tabula_muris_mini.json
 ```
 
 If you want verbose output, use:
 
 ```
-luna --verbose add-h5ad examples/tabula_muris_mini.ini
+luna --verbose add-h5ad examples/tabula_muris_mini.json
 ```
 
 # Running the API
@@ -138,20 +139,20 @@ To downsample an existing h5ad file, you first need to download the full h5ad fi
 wget https://cellxgene-example-data.czi.technology/tabula-muris.h5ad
 ```
 
-You then specify an .ini file with:
+You then specify a JSON file with:
 
 * the path to an existing h5ad file.
 * list of genes you want to extract.
 
-[Example here](examples/tabula_muris_downsample.ini).
+[Example here](examples/tabula_muris_downsample.json).
 
 Then run:
 
 ```
-luna --verbose downsample-h5ad examples/tabula_muris_downsample.ini examples/tabula-muris-mini.h5ad
+luna --verbose downsample-h5ad examples/tabula_muris_downsample.json examples/tabula-muris-mini.h5ad
 ```
 
-By default, this will create a new ```tabula_muris_mini.h5ad``` with only 100 cells and 3 genes.  To specify more cells, use the ```--num_cells``` option.
+This will create a new ```tabula_muris_mini.h5ad``` with only 100 cells and 3 genes.  To specify more cells, use the ```--num_cells``` option.
 
 # Additional Make Commands
 
