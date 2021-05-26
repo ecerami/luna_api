@@ -17,6 +17,6 @@ class VignetteValidator:
         with open("schemas/vignette_schema.json") as f:
             schema_json = json.load(f)
 
-        # In the event of a schema error, validate raise a
+        # In the event of a schema error, validate raises a
         # jsonschema.exceptions.ValidationError
         validate(instance=vignette_json, schema=schema_json)

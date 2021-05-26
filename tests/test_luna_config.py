@@ -1,6 +1,6 @@
 """Tests for the Luna Config."""
 import pytest
-import configparser
+import jsonschema
 from luna.config.luna_config import LunaConfig
 
 CONFIG_PATH = "tests/data/"
@@ -8,7 +8,7 @@ CONFIG_PATH = "tests/data/"
 
 def test_valid_config_file1():
     """Test a valid config file."""
-    config = LunaConfig(CONFIG_PATH + "tabula_muris_select_genes.ini")
+    config = LunaConfig(CONFIG_PATH + "tabula_muris_select_genes.json")
     assert config.h5ad_file_name == "examples/tabula-muris.h5ad"
     assert config.h5ad_description.startswith("Tabula Muris is a compendium")
     assert config.h5ad_url == "https://tabula-muris.ds.czbiohub.org/"
@@ -19,7 +19,7 @@ def test_valid_config_file1():
 
 def test_valid_config_file2():
     """Test a valid config file."""
-    config = LunaConfig(CONFIG_PATH + "tabula_muris_all_genes.ini")
+    config = LunaConfig(CONFIG_PATH + "tabula_muris_all_genes.json")
     assert config.h5ad_file_name == "examples/tabula-muris.h5ad"
     assert config.h5ad_description.startswith("Tabula Muris is a compendium")
     assert config.h5ad_url == "https://tabula-muris.ds.czbiohub.org/"
@@ -28,5 +28,5 @@ def test_valid_config_file2():
 
 def test_invalid_config():
     """Test an invalid config file."""
-    with pytest.raises(configparser.NoSectionError):
-        LunaConfig(CONFIG_PATH + "tabula_muris_broken.ini")
+    with pytest.raises(jsonschema.exceptions.ValidationError):
+        LunaConfig(CONFIG_PATH + "tabula_muris_invalid1.json")
