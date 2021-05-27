@@ -34,6 +34,7 @@ def add(config_file_name):
     luna_config = LunaConfig(config_file_name)
 
     h5ad = H5adDb(
+        luna_config.slug,
         luna_config.h5ad_file_name,
         luna_config.h5ad_description,
         luna_config.h5ad_url,

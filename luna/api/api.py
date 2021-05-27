@@ -71,7 +71,7 @@ class Coordinate(BaseModel):
 
 @app.get("/buckets", response_model=List[Bucket])
 def get_buckets():
-    """Get list of all buckets."""
+    """Get list of all data buckets."""
     session = _init_db_connection()
     try:
         sql_bucket_list = session.query(bucket.Bucket).all()
