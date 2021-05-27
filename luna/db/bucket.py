@@ -1,6 +1,5 @@
 """Bucket object for storing a collection of cells."""
 
-from luna.db.slug import SlugUtil
 from luna.db.base import Base
 from sqlalchemy import Column, Integer, String
 
@@ -16,10 +15,9 @@ class Bucket(Base):
     description = Column(String)
     url = Column(String)
 
-    def __init__(self, name, description=None, url=None):
+    def __init__(self, slug, name, description=None, url=None):
         """Create Bucket Object."""
-        slugger = SlugUtil()
-        self.slug = slugger.sluggify(name)
+        self.slug = slug
         self.name = name
         self.description = description
         self.url = url

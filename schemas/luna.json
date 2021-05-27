@@ -5,6 +5,9 @@
       "bucket": {
         "type": "object",
         "properties": {
+          "slug": {
+            "type": "string"
+          },          
           "file_name": {
             "type": "string"
           },

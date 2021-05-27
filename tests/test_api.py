@@ -33,11 +33,12 @@ def load_sample_data_no_vignettes():
 def _load_sample_data():
     db_connection = DbConnection()
     db_connection.reset_database()
+    slug = "tabula_muris_mini"
     file_name = "examples/tabula-muris-mini.h5ad"
     gene_list = ["Egfr", "P2ry12", "Serpina1c"]
     description = "Mini h5ad test file"
     url = "http://mini-h5ad-test-file.com"
-    h5ad = H5adDb(file_name, description, url, gene_list)
+    h5ad = H5adDb(slug, file_name, description, url, gene_list)
     h5ad.persist_to_database()
 
 

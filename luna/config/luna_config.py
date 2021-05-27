@@ -10,6 +10,7 @@ class LunaConfig:
     h5ad_description = None
     h5ad_url = None
     gene_list = None
+    slug = None
 
     def __init__(self, config_file_name):
         """Create Config Object with specified configuration JSON."""
@@ -28,6 +29,7 @@ class LunaConfig:
             self.h5ad_file_name = bucket["file_name"]
             self.h5ad_description = bucket["description"]
             self.h5ad_url = bucket["url"]
+            self.slug = bucket["slug"]
 
             if "genes" in bucket:
                 self.gene_list = bucket["genes"]

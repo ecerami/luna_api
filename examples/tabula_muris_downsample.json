@@ -1,5 +1,6 @@
 {
     "bucket": {
+        "slug": "tabula_muris",
         "file_name": "examples/tabula-muris.h5ad",
         "genes": [
             "Egfr", 

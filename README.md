@@ -104,13 +104,21 @@ To load an h5ad file, you must first create an ```.json``` configuration file.  
 To import the data, you then run:
 
 ```
-luna add-h5ad examples/tabula_muris_mini.json
+luna add examples/tabula_muris_mini.json
 ```
 
 If you want verbose output, use:
 
 ```
-luna --verbose add-h5ad examples/tabula_muris_mini.json
+luna --verbose add examples/tabula_muris_mini.json
+```
+
+Once you have loaded the core data, you must load a Vignettes JSON file.  This file defines the vignettes or views that you want to highlight in the front-end interface.  Here is an [example Vignettes file](examples/tabula_muris_vignettes.json).
+
+To import your vignettes, run:
+
+```
+luna add-vignettes examples/tabula_muris_vignettes.json
 ```
 
 # Running the API

@@ -9,6 +9,7 @@ CONFIG_PATH = "tests/data/"
 def test_valid_config_file1():
     """Test a valid config file."""
     config = LunaConfig(CONFIG_PATH + "tabula_muris_select_genes.json")
+    assert config.slug == "tabula_muris"
     assert config.h5ad_file_name == "examples/tabula-muris.h5ad"
     assert config.h5ad_description.startswith("Tabula Muris is a compendium")
     assert config.h5ad_url == "https://tabula-muris.ds.czbiohub.org/"

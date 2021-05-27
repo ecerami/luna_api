@@ -17,7 +17,7 @@ class H5adDb:
     UMAP_KEY = "X_umap"
     TSNE_KEY = "X_tsne"
 
-    def __init__(self, file_name, description, url, gene_list=[]):
+    def __init__(self, slug, file_name, description, url, gene_list=[]):
         """
         Construct class with h5ad meta-data.
 
@@ -26,11 +26,12 @@ class H5adDb:
         # Ignore Future Warnings from anndata
         warnings.simplefilter(action="ignore", category=FutureWarning)
 
+        self.slug = slug
         self.h5ad_file_name = file_name
-        self.description = description
+        self.desc = description
         self.url = url
 
-        self.base_file_name = os.path.basename(file_name)
+        self.file_name = os.path.basename(file_name)
         self.adata = anndata.read_h5ad(file_name)
         self.gene_list = gene_list
 
@@ -47,8 +48,8 @@ class H5adDb:
         self._persist_x()
 
     def _persist_bucket(self):
-        logging.info(f"Persisting bucket: {self.base_file_name}.")
-        self.bucket = Bucket(self.base_file_name, self.description, self.url)
+        logging.info(f"Persisting bucket: {self.file_name}.")
+        self.bucket = Bucket(self.slug, self.file_name, self.desc, self.url)
         self.session.add(self.bucket)
         self.session.commit()
         logging.info(f"Got Bucket ID: {self.bucket.id}.")
