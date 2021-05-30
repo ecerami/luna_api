@@ -1,0 +1,56 @@
+{
+   "bucket_slug": "tabula_muris_mini",
+   "vignettes": [
+      {
+         "slug": "p2ry12",
+         "label": "P2ry12 expression",
+         "description": "P2ry12 expression.",
+         "gene": "P2ry12"
+      },
+      {
+         "slug": "egfr",
+         "label": "Egfr expression",
+         "description": "Egfr expression.",
+         "gene": "Egfr"
+      },
+      {
+         "slug": "serpina1c",
+         "label": "Serpina1c expression",
+         "description": "Serpina1c expression.",
+         "gene": "Serpina1c"
+      },
+      {
+         "slug": "cell_ontology",
+         "label": "Color code by cell ontology.",
+         "description": "Color code by cell ontology.",
+         "color_by": "cell_ontology_class",
+         "active": [
+            "basophil",
+            "astrocyte",
+            "microglial cell"
+         ]
+      },
+      {
+         "slug": "p2ry12_3d",
+         "label": "P2ry12 expression in 3D Landscape.",
+         "description": "P2ry12 expression in 3D Landscape.",
+         "gene": "P2ry12",
+         "hex_bin_radius": 50,
+         "elevation_by": "P2ry12",
+         "elevation_scale": 1000
+      },
+      {
+         "slug": "p2ry12_3d_microglial",
+         "label": "High expression of P2ry12 in microglial cells.",
+         "description": "High expression of P2ry12 in microglial cells.",
+         "gene": "P2ry12",
+         "hex_bin_radius": 50,
+         "elevation_by": "P2ry12",
+         "elevation_scale": 1000,
+         "color_by": "cell_ontology_class",
+         "active": [
+            "microglial cell"
+         ]
+      }
+   ]
+}
